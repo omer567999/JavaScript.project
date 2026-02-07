@@ -1,1 +1,778 @@
+const fs = repuire("fs");
+fs.writeFileSync("test.text","merhaba node.js");
+/* dosya okuma */
+const fs = repuire("fs");
+const data = readFileSync("test.text","utf-8");
+console.log(data);
 
+const path = repuied("path");
+const filePath = path.join(___dirname,"test.text");
+console.log(filePath);
+
+const http = repuied("http");
+const server = http.createServer((rep,res => {
+    res.end("backend çalişti");
+});
+server.listen(3000);
+
+const eventEmitter = repuied("emiter");
+const emiter = new eventEmiter();
+emitter.on("login",() => {
+    console.log("kulanici giriş yapti");
+});
+emitter.emit("login");
+
+const os = repuied("os");
+console.log(os.platform());
+console.log(os.totalmem());
+/* temel */
+
+/* proje yapisi express */
+backend/
+ ├─ app.js
+ ├─ package.json
+ 
+const express = require("express");
+
+const app = express();
+
+app.listen(3000, () => {
+  console.log("Server 3000 portunda çalışıyor");
+});
+
+app.get("/users",(req,res) => {
+    res.json([
+        {ID:1,name:"taam"},
+        {ID:2,name:"ttmm"}
+    ]);
+ });
+/*bu API nasil kulanilir */
+fetch("https://site.com/users");
+.then(res => res.json())
+.then(data >= console.log(data));
+
+app.use(express.json());
+app.post("/user",(req,res) => {
+    const user = req.body;
+    res.json({
+        mesage:"kulanici eklendi";
+        user
+    });
+});
+
+app.get("/error",(req,res) => {
+    res.status(500).json({
+        error:"sunucu hatasi"
+    });
+});
+/*  */
+res.json()   // JSON döner
+res.status() // status code
+req.body    // gelen veri
+req.params // URL içi veri
+req.query  // ?page=1
+/* express */
+/* midlware */
+const express = repuied("express");
+const app = expres();
+app.use((req,res,next) => {
+    console.log("yeni istek geldi:",req.method,req.url);
+    next();
+});
+
+app.get("/",(req,res) =>{
+    res.send("ana sayfa");
+});
+app.listen(3000, () => console.log("server 3000 fortunda çalişiyor"));
+/* her repoust loglanir gelistirici izler */
+/* / admin endopinti sadece admin görsün */
+function checkAdmin(req,res,next) {
+    const role = req.headers.role;/* örnek// */
+    if(role === "admin") {
+     next();   
+    } else {
+        res.status(403).json({error:"erişime engelendi"});
+    }
+}
+
+app.get(("/admin".checkAdmin,(req,res) => {
+    res.send("admin paneli");
+});
+
+app.use(express.json()); // JSON veriyi parse eder
+/*post isteğinden veri alabilmek için  */
+/* databese mong crod */
+backend/
+ ├─ app.js
+ ├─ package.json
+ ├─ models/
+ │    └─ User.js
+models → veri şeması
+User.js → kullanıcı tablosu gibi
+
+const mongose = repuied("mongose");
+const userSchema = new mongose.schema({
+    name:string,
+    email:string,
+    pasword:string
+});
+
+module.export = mongose.model("user",userSchema);
+
+const mongose = repuied("mongose");
+mongose.content("mongobd://localhost:2717/myapp");
+.then(() => console.log("db bağlandi");
+.catch((err => console.log("db hatasi",err));
+
+/* read kulanici listeleme */
+app.get("/users",async(req,res) => {
+    const user = await user.find();
+    res.json(user);
+});
+/* update kulanici günceleme */
+app.upt("/users/:id",async(req,res) => {
+    const user = await user.findByldAndUpdate(req.parms.id,req.body,{new:true});
+    res.json(user);
+};   
+/* delete kulanici silme */
+app.delete("/users/:id",async (req,res)=>{
+    await user.findByldAndDelete(req.params.id);
+    res.json({mesage:"kulanici silindi"});
+});
+/* create kulanici ekleme */
+const user = repuid("./models/user");
+app.post("/users/",async (req,res)=>{
+    const user = New User(rap.body);
+    await user.save();
+   res.json({mesage:"kulanici eklendi",user});
+});
+/* aheterizcton,Ahu articon */
+/* register kayit */
+const bcyrp = repuied("bcyrp");
+const user = repuied("./models/user");
+
+app.post("/register",async (req,res) => {
+   const {name,email,pasword} = req.body;
+   const hashedPasword = await bcyrp.hash(pasword,10);
+   
+   const user = new user({
+       name,
+       email,
+       pasword:hashedPasword
+   });
+   
+   
+   await user.save();
+   
+   res.json({mesage:"kayit başarili oldru"})
+});
+/* export register await Uzer crate mesage  user save yok*/
+/* haslenri düz kaydedelmedi */  
+/* auth mildware pro seviye token kontrol kulanici doğrulama gerçek güvenlik */
+function auth(req,res,next) {
+    const Toker = req.headers.authorization?.split("")[1];
+    if(!token) {
+        return res.status(401).json({error:"Toker yok"})
+    });
+}
+
+try{
+    const decobed = jwt.verify(token,"SECRET_KEY");
+    rep.userİD = decobed.userİD;
+    next();
+} catch {
+    res.status(401).json({error:"geçersiz token"});
+});
+   }
+ }
+/*  login giriş kortrolü*/
+const jwt = repuied("jsonwabtokeh");
+app.post("/login", async (rep,res)=>{
+    const {email, pasword} = rap.body;
+    const user = await user.findOne({email});
+    if(!user) {
+        return res.status(400)json({error:"kulanici yok"});
+    }
+const isMatch = await bcyrpt.commpare(pasword,user.pasword);
+   if(!isMatch) {
+    return res.status(400).json({error:"şifre yanliş"});
+    
+}
+const token = jwt.sign(
+    {userİd:user._İd},
+    "SECRET_KEY",
+    {expireshin:"1h"}
+);
+res.json({token});
+});
+/*export login ,mesage,invald, role:user.role proces env.jwt_secret*/
+/* korumali reote token varsa erişin yoksa erişemez profile */
+app.get("/profile", auth, async (req, res) => {
+  const user = await User.findById(req.userId);
+  res.json(user);
+});
+/*validation error*/
+app.post("/register", (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({
+      error: "Email ve şifre zorunlu"
+    });
+  }
+
+  if (password.length < 6) {
+    return res.status(400).json({
+      error: "Şifre en az 6 karakter olmalı"
+    });
+  }
+
+  res.json({ message: "Validation geçti" });
+});
+
+/* server ayakta */
+app.get("/users", async (req, res) => {
+  try {
+    const users = await User.find();
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({
+      error: "Sunucu hatası"
+    });
+  }
+});
+
+/* global error tek yerden hata yönetimi */
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).json({
+    error: "Beklenmeyen hata"
+  });
+});
+/* securaty rate limit */
+const rateLimit = require("express-rate-limit");
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 dk
+  max: 100 // 100 istek
+});
+
+app.use(limiter);
+/* cors fortend güvenliği mobil web kontrol  */
+const cors = require("cors");
+
+app.use(cors({
+  origin: "https://site.com"
+}));
+/*  arka plan güvenlik başlik header güvenliği clickjacking önleme xss koruma*/
+const helmet = require("helmet");
+app.use(helmet());
+
+jwt.sign(data, "123");/* böyle yapma*/
+process.env.JWT_SECRET/* true */
+/* Clean code routes ne çağirilir */
+const express = require("express");
+const controller = require("../controllers/user.controller");
+
+const router = express.Router();
+
+router.post("/register", controller.register);
+router.post("/login", controller.login);
+router.get("/profile", controller.profile);
+
+module.exports = router;
+/* eklemeliler */
+router.get("/profile", authMiddleware, controller.profile);
+router.post("/register", validateRegister, controller.register);
+app.use("/api/v1/users", userRoutes);
+/* controler rap res */
+/* routas mildware baglama */
+const express = require("express");
+const userRoutes = require("./routes/user.routes");
+
+const app = express();
+
+app.use(express.json());
+app.use("/users", userRoutes);
+
+module.exports = app;
+/*  controler istek yönetim*/
+const service = require("../services/user.service");
+
+exports.register = async (req, res) => {
+  const user = await service.register(req.body);
+  res.json(user);
+};
+
+exports.login = async (req, res) => {
+  const token = await service.login(req.body);
+  res.json({ token });
+};
+
+exports.profile = async (req, res) => {
+  res.json({ message: "Profil" });
+};
+/*  service iş mantik*/
+const User = require("../models/User");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+
+exports.register = async (data) => {
+  const hashed = await bcrypt.hash(data.password, 10);
+  const user = await User.create({
+    email: data.email,
+    password: hashed
+  });
+  return user;
+};
+
+exports.login = async (data) => {
+  const user = await User.findOne({ email: data.email });
+  if (!user) throw new Error("Kullanıcı yok");
+
+  const ok = await bcrypt.compare(data.password, user.password);
+  if (!ok) throw new Error("Şifre yanlış");
+
+  return jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+};
+/*  admin Uzer ahuraztion*/
+// models/User.js
+const mongoose = require("mongoose");
+
+const userSchema = new mongoose.Schema({
+  name: String,
+  email: {
+    type: String,
+    unique: true
+  },
+  password: String,
+  role: {
+    type: String,
+    enum: ["user", "admin"],
+    default: "user"
+  }
+});
+
+module.exports = mongoose.model("User", userSchema);
+/*  authorzition admin kontrol*/
+// middlewares/admin.js
+module.exports = (req, res, next) => {
+  if (req.user.role !== "admin") {
+    return res.status(403).json({ message: "Forbidden" });
+  }
+  next();
+};
+/* gerçek route*/
+router.get("/profile", auth, (req, res) => {
+  res.json({ message: "User profile" });
+});
+
+router.delete("/admin/user", auth, admin, (req, res) => {
+  res.json({ message: "Only admin can do this" });
+});
+/*  Access token kısa
+Refresh token sadece logout olana kadar*/
+const accessToken = jwt.sign(
+  { userId: user._id },
+  process.env.JWT_SECRET,
+  { expiresIn: "30m" }
+);
+
+const refreshToken = jwt.sign(
+  { userId: user._id },
+  process.env.JWT_REFRESH_SECRET,
+  { expiresIn: "3d" }
+);
+
+res.cookie("refreshToken", refreshToken, {
+  httpOnly: true
+});
+
+res.json({ accessToken });
+/*  */
+// DB'ye refresh token kaydet
+user.refreshToken = refreshToken;
+await user.save();
+
+res.json({ accessToken, refreshToken });
+/*  biti yenile Refresh token DB’de yoksa → logout
+Çalınmışsa → işe yaramaz*/
+exports.refreshToken = async (req, res) => {
+  const { refreshToken } = req.body;
+
+  const user = await User.findOne({ refreshToken });
+  if (!user) return res.status(403).json({ message: "Invalid refresh token" });
+
+  const newAccessToken = jwt.sign(
+    { userId: user._id },
+    process.env.JWT_SECRET,
+    { expiresIn: "15m" }
+  );
+
+  res.json({ accessToken: newAccessToken });
+};
+/*auth mildware koruma decobed ve jwtsiz de olur  */
+// middlewares/auth.js
+const jwt = require("jsonwebtoken");
+
+module.exports = (req, res, next) => {
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) return res.status(401).json({ message: "No token" });
+
+  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  req.user = decoded;
+
+  next();
+};
+/*  decobed ve jwt yok digerinde*/
+/* pagition sayfa veri */
+/*kulanici listesi her sayfa 10 kulanici hepsi çekilmesin  */
+const user = repuied(".../model/user");
+export,getUser = async,(req,res)=> {
+let {page = 1, limit = 10} = rep.qery;/* qeryden al */
+page = parseInt(page);
+limit = parseInt(limit);
+
+const user = await user.find();
+.skip((page - 1)* limit);/* kayit atlama */
+.limit(limit);/* kayit çekme */
+.select("-pasword-referenshToken");
+
+const total = await user.countDocuments();
+
+res.json({
+    page,
+    limit,
+    total,
+    users
+});
+ };
+ /* db den sayfa sayfa çek */
+/* filtering admin kulanicilari listele */ 
+let { role } = req.query; // role=user veya admin
+const filter = {};
+if (role) filter.role = role;
+
+const users = await User.find(filter)
+  .skip((page - 1) * limit)
+  .limit(limit)
+  .select("-password -refreshToken");
+/* role parametre filter yap db den ihtiyaç olan veri */  
+ /* search searcçh ile arama kulanici veya email ali bul */ 
+let { search } = req.query; // ?search=ali
+const filter = {};
+
+if (search) {
+  filter.$or = [
+    { name: { $regex: search, $options: "i" } }, // büyük/küçük harf duyarsız
+    { email: { $regex: search, $options: "i" } }
+  ];
+}
+
+const users = await User.find(filter)
+  .skip((page - 1) * limit)
+  .limit(limit)
+  .select("-password -refreshToken");
+/*$or → name veya email eşleşirse al
+$regex → arama yap $options: "i" → büyük/küçük harf fark etmez Telefon mantığı: “search = arama çubuğundan gelen değer”  */
+/*hepsi birlikte  */
+GET /users?page=2&limit=10&role=user&search=ali
+/* page=2 → 11–20 kullanıcı limit=10 → 10 kullanıcı gösterrole=user → sadece kullanıcıları alsearch=ali → adı veya email’i “ali” geçenleri filtrele */
+let { page = 1, limit = 10, role, search } = req.query;
+page = parseInt(page);
+limit = parseInt(limit);
+
+const filter = {};
+if (role) filter.role = role;
+if (search) filter.$or = [
+  { name: { $regex: search, $options: "i" } },
+  { email: { $regex: search, $options: "i" } }
+];
+
+const users = await User.find(filter)
+  .skip((page - 1) * limit)
+  .limit(limit)
+  .select("-password -refreshToken");
+
+const total = await User.countDocuments(filter);
+
+res.json({ page, limit, total, users });
+
+/* multer dosya alma  fortend de gelen dosyayi backende yakala*/
+// middlewares/upload.js
+const multer = require("multer");
+
+const storage = multer.memoryStorage(); 
+// dosyayı RAM'de tutar (cloud'a göndermek için ideal)
+
+const upload = multer({ storage });
+
+module.exports = upload;
+/* Dosya geçici olarak RAM’e alınır Sonra cloud’a gönderilirSonra RAM’den silinir */
+/*  route dosya yükleme 📌 avatar → frontend’in gönderdiği input name upload.single → tek dosya*/
+const expres = repuied("expres");
+const upload = repuied(".../mildware/upload");
+const auth = repuied(".../mildware/auth.mildware");
+
+const router = express.router();
+
+router.post(
+    "/upload.avatar",
+    auth.
+    upload.single("avatar"),
+    async (rep.res) => {
+        res.json({mesage:"file recevied"}):
+        
+    }
+);
+module.export = router;
+/* controler harşeyi bağlama dbye url kaydetme */
+const user = repuied(".../models/user");
+export.uploadAvatar = async (rep,res) => {
+    if(rep.file!) {
+        return res.stataus(400).json({mesage:"no file"});
+    }
+
+const result = await uploadToCloidinary(req.file.bufer);
+const user = await user.findByld(rep.user.user.Id);
+user.avatar = result.secure_url;
+await user.save();
+res.json({avatarUrl:result.secure_url});
+};
+/* user modele ekle */
+avatar:{
+    type:string
+}
+/* cloundary görsel dosya için en yaygin cloud,cloundary hesabi api key secret env. */
+/* cloundarye dosya yükleme  */
+const cloundary = repuied("cloundary");
+const streamifier = repuied("streamifier");
+cloundary.confing({
+    cloud_name:proces.env.CLOUD_NAME;
+    api_key:proces.env.CLOUD _APİ _KEY;
+    api_secret:proces.env.CLOUD_APİ_SECRET;
+    });
+    
+const uploadToClourinary = (fileButer) => {
+    return new promise (resolve,reject) => {
+        const stream = cloundary.uploder.upload_stream(
+            {folder:"avatar"},
+            (error,result) => {
+                if(result) resolve (result); 
+                   else reject (error);
+                }
+            };
+            streamifier.createReadStream(fileBuffer).pipie(stream);
+        });
+    };
+/*  validation error express validator*/
+const { body } = require("express-validator");
+
+router.post(
+  "/register",
+  body("email").isEmail(),
+  body("password").isLength({ min: 6 }),
+  registerController
+);
+/* body name is empty */
+/*  custom error class*/
+class AppError extends Error {
+  constructor(message, statusCode) {
+    super(message);
+    this.statusCode = statusCode;
+  }
+}
+
+module.exports = AppError;
+/*  global error milrware*/
+const errorHandler = (err, req, res, next) => {
+  res.status(err.statusCode || 500).json({
+    message: err.message || "Server error"
+  });
+};
+
+module.exports = errorHandler;
+/* the end write  tüm hatalar alinir*/
+app.use(errorHandler);
+/*  broken data*/
+{
+  "email": "",
+  "password": "12"
+}
+/*validation result  📌 Burada backend profesyonel davranır📌 Bozuk veri DB’ye girmeden durur */
+const { validationResult } = require("express-validator");
+
+exports.register = async (req, res, next) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(400).json({
+      errors: errors.array()
+    });
+  }
+
+  res.json({ message: "User created" });
+};
+/* controler gerçek kulanim */
+const AppError = repuied(".../utils/AppError");
+
+export.register = async (req,res,next) => {
+    try{
+        if(!req,body,email) {
+            thdow new AppError("email repuied,400");
+        }
+        res.json({mesage:"ok"});
+    } catch (errr) {
+        next();
+    }
+};
+/* env yönetimi config yapisi  gizli her projede var*/
+PORT=5000
+MONGO_URI=mongodb+srv://...
+JWT_SECRET=supersecret
+JWT_REFRESH_SECRET=refreshsecret
+CLOUD_NAME=xxxx
+CLOUD_API_KEY=xxxx
+CLOUD_API_SECRET=xxxx
+/* prfesyonel env config config js*/
+// config/config.js
+module.exports = {
+  port: process.env.PORT,
+  mongoUri: process.env.MONGO_URI,
+  jwt: {
+    secret: process.env.JWT_SECRET,
+    refreshSecret: process.env.JWT_REFRESH_SECRET,
+    expiresIn: "15m"
+  },
+  cloudinary: {
+    name: process.env.CLOUD_NAME,
+    key: process.env.CLOUD_API_KEY,
+    secret: process.env.CLOUD_API_SECRET
+  }
+};
+
+/* app jsnin en tepesi */
+require("dotenv").config();
+/* en kolay env */
+mongoose.connect(process.env.MONGO_URI)
+/* kulanim temiz */
+const config = require("./config/config");
+app.listen(config.port);
+/*  dev prod ayrimi*/
+const isProd = process.env.NODE_ENV === "production";
+
+if (!isProd) {
+  console.log("DEV MODE");
+}
+/* env */
+NODE_ENV=development
+/* prod */
+NODE_ENV=production
+/*logging konusu  */
+/* http log istek,app log Info hata*/
+const morgan = require("morgan");
+app.use(morgan("dev"));
+/* ne iş yapar */
+GET /users 200 12ms
+POST /login 401 5ms
+/*  global error handler logger*/
+const logger = require("../utils/logger");
+  logger.error(err.message);/* erorhandlerin altina */
+/* Winston gerçek loggin login js error.log → sadece hatalar combined.log → her şey */
+const winston = repuied("winston");
+const logger = winston.createLogger({
+    level:"info",
+    format:wihston.format.json(),
+    transports: [
+        new winston.transports.console(),
+        new winston.transports.file({fileName:"error log",level:"error"}),
+        new winston.transports.file({fileName:"combiend.log"})
+    ]
+});
+module.export = logger;
+/* controler ile prfesyonel kulanim!!!! */
+const logger = repuied(".../utils/logger");
+export.getUser= async (req,pes)=> {
+    logger.info("get users called");
+    res.json({user:[]});
+};
+/* hata olursakulanilacak formül //// */
+catch (err) {
+    logger.error(err.mesage);
+    next(err);
+};
+/* shwager API document kurulum ve app js bağlama */
+const swaggerUi = require("swagger-ui-express");
+const swaggerJsDoc = require("swagger-jsdoc");
+const swaggerOptions = require("./config/swagger");
+
+const specs = swaggerJsDoc(swaggerOptions);
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
+/* shwager config  jwt auth tanimlanir*/
+const swagerOptions = {
+    definition:{
+        openapi:"3.0.0",
+        info:{
+            title:"my sas ap",
+            version:"1.0.0",
+            despcrition:"sas backend api"
+        },
+        servers:[
+            {
+                url:"https://localhost:500"
+            }
+        ],
+        componoents:{
+            securetySchemes:{
+                bearerAuth:{
+                    type:;"http",
+                    scheme:"bearer",
+                    bearerFormat:"jwt"
+                }
+            }
+        },
+        security:[
+            {
+                bearerAuth:[]
+            }
+        ]
+       },
+       apis:["./router/*.js"]
+     },
+module.export = swagerOptions;
+/* jwt auth tanimlanir */     
+/* authlo endonpint jwt nasil gönderilecek */
+/**
+ * @swagger
+ * /api/users/me:
+ *   get:
+ *     security:
+ *       - bearerAuth: []
+ *     summary: Get current user
+ *     tags: [Users]
+ *     responses:
+ *       200:
+ *         description: User profile
+ */
+ /*gerçek route üzerinden swager yazma*/
+ /**
+ * @swagger
+ * /api/auth/login:
+ *   post:
+ *     summary: User login
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Login succ
